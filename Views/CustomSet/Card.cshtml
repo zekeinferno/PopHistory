@@ -1,0 +1,330 @@
+﻿@model CardModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>@Model.Title</h2>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/CustomSets">Custom Sets</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/CustomSet/@Model.SetId.ToString()">@Model.SetName</a>
+            </li>
+            <li class="active breadcrumb-item">
+                <strong>@Model.Title</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeIn">
+    <div class="p-w-md m-t-sm">
+        <div class="row">
+            <div class="col-md-12 col-lg-6">
+                <div class="ibox" id="xy_chart">
+                    <div class="ibox-title">
+                        <h5>Population Growth / Time</h5>
+
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="fullscreen-link">
+                                <i class="fa fa-expand"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content sk-loading">
+                        <div id="xyChartDiv" style="height:500px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6">
+                <div class="ibox" id="pie_chart">
+                    <div class="ibox-title">
+                        <h5>Population Ratio</h5>
+
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="fullscreen-link">
+                                <i class="fa fa-expand"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content sk-loading">
+                        <!-- HTML -->
+                        <div id="pieChartDiv" style="height:500px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+    <!-- Chart code -->
+    <script type="text/javascript">
+        var totalPopAuth = "totalAuth";
+        var totalPop01 = "totalPop1";
+        var totalPop02 = "totalPop2";
+        var totalPop03 = "totalPop3";
+        var totalPop04 = "totalPop4";
+        var totalPop05 = "totalPop5";
+        var totalPop06 = "totalPop6";
+        var totalPop07 = "totalPop7";
+        var totalPop08 = "totalPop8";
+        var totalPop085 = "totalPop85";
+        var totalPop09 = "totalPop9";
+        var totalPop095 = "totalPop95";
+        var totalPop10 = "totalPop10";
+        var category = "category";
+        var value = "value";
+        var model = @Json.Serialize(Model.PopHistories);
+        var uniqueDates = model.map(function (popHistory) {
+            return popHistory.dateCreated;
+        }).filter(function (value, index, self) {
+            return self.indexOf(value) === index;
+        }).sort();
+
+        function getSum(total, num) {
+            if (num) {
+                return total + Math.round(num);
+            } else {
+                return total;
+            }
+        }
+
+        am4core.ready(function () {
+            am4core.useTheme(am4themes_animated);
+
+            // Create chart instance
+            var chart = am4core.create("xyChartDiv", am4charts.XYChart);
+
+            // Increase contrast by taking evey second color
+            chart.colors.step = 2;
+
+            // Add data
+            chart.data = generateXYChartData();
+
+            // Create axes
+            var xAxis = new am4charts.DateAxis();
+            var dateAxis = chart.xAxes.push(xAxis);
+            dateAxis.renderer.minGridDistance = 50;
+
+            var yAxis = new am4charts.ValueAxis();
+            yAxis.maxPrecision = 0;
+            var valueAxis = chart.yAxes.push(yAxis);
+
+            // Create series
+            function createAxisAndSeries(field, name, hidden, bullet) {
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = field;
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 2;
+                series.name = name;
+                series.hidden = hidden;
+                series.tooltipText = "{name}: [bold]{valueY}[/]";
+                series.tensionX = 0.8;
+
+                var interfaceColors = new am4core.InterfaceColorSet();
+
+                switch (bullet) {
+                    case "triangle":
+                        var bullet = series.bullets.push(new am4charts.Bullet());
+                        bullet.width = 12;
+                        bullet.height = 12;
+                        bullet.horizontalCenter = "middle";
+                        bullet.verticalCenter = "middle";
+
+                        var triangle = bullet.createChild(am4core.Triangle);
+                        triangle.stroke = interfaceColors.getFor("background");
+                        triangle.strokeWidth = 2;
+                        triangle.direction = "top";
+                        triangle.width = 12;
+                        triangle.height = 12;
+                        break;
+                    case "rectangle":
+                        var bullet = series.bullets.push(new am4charts.Bullet());
+                        bullet.width = 10;
+                        bullet.height = 10;
+                        bullet.horizontalCenter = "middle";
+                        bullet.verticalCenter = "middle";
+
+                        var rectangle = bullet.createChild(am4core.Rectangle);
+                        rectangle.stroke = interfaceColors.getFor("background");
+                        rectangle.strokeWidth = 2;
+                        rectangle.width = 10;
+                        rectangle.height = 10;
+                        break;
+                    default:
+                        var bullet = series.bullets.push(new am4charts.CircleBullet());
+                        bullet.circle.stroke = interfaceColors.getFor("background");
+                        bullet.circle.strokeWidth = 2;
+                        break;
+                }
+            }
+
+            createAxisAndSeries(totalPopAuth, "Auth", true, "triangle");
+            createAxisAndSeries(totalPop01, "Pop 1", true, "circle");
+            createAxisAndSeries(totalPop02, "Pop 2", true, "circle");
+            createAxisAndSeries(totalPop03, "Pop 3", true, "circle");
+            createAxisAndSeries(totalPop04, "Pop 4", true, "circle");
+            createAxisAndSeries(totalPop05, "Pop 5", true, "circle");
+            createAxisAndSeries(totalPop06, "Pop 6", true, "circle");
+            createAxisAndSeries(totalPop07, "Pop 7", true, "circle");
+            createAxisAndSeries(totalPop08, "Pop 8", true, "circle");
+            //createAxisAndSeries(totalPop085, "Pop 8.5", true, "circle");
+            createAxisAndSeries(totalPop09, "Pop 9", true, "circle");
+            //createAxisAndSeries(totalPop095, "Pop 9.5", true, "circle");
+            createAxisAndSeries(totalPop10, "Pop 10", false, "circle");
+
+            valueAxis.renderer.line.strokeOpacity = 1;
+            valueAxis.renderer.line.strokeWidth = 2;
+            valueAxis.renderer.grid.template.disabled = true;
+
+            // Add legend
+            chart.legend = new am4charts.Legend();
+
+            // Add cursor
+            chart.cursor = new am4charts.XYCursor();
+
+            function generateXYChartData() {
+                var xyChartData = [];
+
+                uniqueDates.forEach(function (date) {
+                    var popHistories = model.filter(function (popHistory) {
+                        return popHistory.dateCreated === date;
+                    });
+
+                    var data = {
+                        date: new Date(date)
+                    };
+
+                    data[totalPopAuth] = popHistories.map(function (popHistory) { return popHistory.popAuth; }).reduce(getSum, 0);
+                    data[totalPop01] = popHistories.map(function (popHistory) { return popHistory.pop01; }).reduce(getSum, 0);
+                    data[totalPop02] = popHistories.map(function (popHistory) { return popHistory.pop02; }).reduce(getSum, 0);
+                    data[totalPop03] = popHistories.map(function (popHistory) { return popHistory.pop03; }).reduce(getSum, 0);
+                    data[totalPop04] = popHistories.map(function (popHistory) { return popHistory.pop04; }).reduce(getSum, 0);
+                    data[totalPop05] = popHistories.map(function (popHistory) { return popHistory.pop05; }).reduce(getSum, 0);
+                    data[totalPop06] = popHistories.map(function (popHistory) { return popHistory.pop06; }).reduce(getSum, 0);
+                    data[totalPop07] = popHistories.map(function (popHistory) { return popHistory.pop07; }).reduce(getSum, 0);
+                    data[totalPop08] = popHistories.map(function (popHistory) { return popHistory.pop08; }).reduce(getSum, 0);
+                    //data[totalPop085] = popHistories.map(function (popHistory) { return popHistory.pop085; }).reduce(getSum, 0);
+                    data[totalPop09] = popHistories.map(function (popHistory) { return popHistory.pop09; }).reduce(getSum, 0);
+                    //data[totalPop095] = popHistories.map(function (popHistory) { return popHistory.pop095; }).reduce(getSum, 0);
+                    data[totalPop10] = popHistories.map(function (popHistory) { return popHistory.pop10; }).reduce(getSum, 0);
+
+                    xyChartData.push(data);
+                });
+
+                return xyChartData;
+            }
+
+            // Create pieChart instance
+            var pieChart = am4core.create("pieChartDiv", am4charts.PieChart);
+
+            // Add and configure Series
+            var pieSeries = pieChart.series.push(new am4charts.PieSeries());
+            pieSeries.dataFields.value = value;
+            pieSeries.dataFields.category = category;
+
+            // Let's cut a hole in our Pie Chart the size of 30% the radius
+            pieChart.innerRadius = am4core.percent(30);
+
+            // Put a thick white border around each Slice
+            pieSeries.slices.template.stroke = am4core.color("#fff");
+            pieSeries.slices.template.strokeWidth = 2;
+            pieSeries.slices.template.strokeOpacity = 1;
+            pieSeries.slices.template
+                // change the cursor on hover to make it apparent the object can be interacted with
+                .cursorOverStyle = [
+                    {
+                        "property": "cursor",
+                        "value": "pointer"
+                    }
+                ];
+
+            pieSeries.alignLabels = false;
+            pieSeries.labels.template.bent = true;
+            pieSeries.labels.template.radius = 3;
+            pieSeries.labels.template.padding(0, 0, 0, 0);
+
+            pieSeries.ticks.template.disabled = true;
+
+            // Create a base filter effect (as if it's not there) for the hover to return to
+            var shadow = pieSeries.slices.template.filters.push(new am4core.DropShadowFilter);
+            shadow.opacity = 0;
+
+            // Create hover state
+            var hoverState = pieSeries.slices.template.states.getKey("hover"); // normally we have to create the hover state, in this case it already exists
+
+            // Slightly shift the shadow and make it more prominent on hover
+            var hoverShadow = hoverState.filters.push(new am4core.DropShadowFilter);
+            hoverShadow.opacity = 0.7;
+            hoverShadow.blur = 5;
+
+            // Add a legend
+            pieChart.legend = new am4charts.Legend();
+
+            function generatePieChartDataObject(categoryName, amount) {
+                var retVal = {};
+
+                if (amount > 0) {
+                    retVal[category] = categoryName;
+                    retVal[value] = amount;
+                }
+
+                return retVal;
+            }
+
+            function generatePieChartData() {
+                var latestDate = uniqueDates.slice(-1)[0];
+                var pieChartData = [];
+
+                var popHistories = model.filter(function (popHistory) {
+                    return popHistory.dateCreated === latestDate;
+                });
+
+                pieChartData.push(generatePieChartDataObject("Auth", popHistories.map(function (popHistory) { return popHistory.popAuth; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 1", popHistories.map(function (popHistory) { return popHistory.pop01; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 2", popHistories.map(function (popHistory) { return popHistory.pop02; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 3", popHistories.map(function (popHistory) { return popHistory.pop03; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 4", popHistories.map(function (popHistory) { return popHistory.pop04; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 5", popHistories.map(function (popHistory) { return popHistory.pop05; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 6", popHistories.map(function (popHistory) { return popHistory.pop06; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 7", popHistories.map(function (popHistory) { return popHistory.pop07; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 8", popHistories.map(function (popHistory) { return popHistory.pop08; }).reduce(getSum, 0)));
+                //pieChartData.push(generatePieChartDataObject("Pop 8.5", popHistories.map(function (popHistory) { return popHistory.pop085; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 9", popHistories.map(function (popHistory) { return popHistory.pop09; }).reduce(getSum, 0)));
+                //pieChartData.push(generatePieChartDataObject("Pop 9.5", popHistories.map(function (popHistory) { return popHistory.pop095; }).reduce(getSum, 0)));
+                pieChartData.push(generatePieChartDataObject("Pop 10", popHistories.map(function (popHistory) { return popHistory.pop10; }).reduce(getSum, 0)));
+
+                return pieChartData.filter(value => Object.keys(value).length !== 0);
+            }
+
+            pieChart.data = generatePieChartData();
+
+            $('#xy_chart').children('.ibox-content').toggleClass('sk-loading');
+            $('#pie_chart').children('.ibox-content').toggleClass('sk-loading');
+        });
+    </script>
+}
+
+
+

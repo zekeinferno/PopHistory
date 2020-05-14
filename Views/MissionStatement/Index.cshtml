@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "Mission Statement";
+}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="grid">
+        <div class="grid-item">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><strong>The primary goal of this website is to track the population of PSA graded cards, namely Pokemon and Yu-Gi-Oh!</strong></h5>
+                </div>
+                <div class="ibox-content">
+                    This project aimed to provide as much value as possible while still being low cost and low maintenance.
+                    <br /><br />
+                    <strong>Low Cost:</strong> This site is heavily cached on the server side using output caching. What this means is that refreshing the browser will typically do nothing. This type of caching allows me to pay little to nothing to keep this site going. Ad revenue? Ew.
+                    <br /><br />
+                    <strong>Low Maintenance:</strong> There is a separate project that retrieves the data from PSA's API once a day for a predetermined list of sets. This process is completely automatic. Everything about this project runs in Azure.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><strong>About the Data</strong></h5>
+                </div>
+                <div class="ibox-content">
+                    All data comes from PSA's Population Report.
+                    <br /><br />
+                    The data will take a while before it may become useful in charts since I cannot gather data from the past.
+                    <br /><br />
+                    If PSA doesn't distinguish between Ultimate Rares and Secret Rares, this site doesn't either.
+                    <br /><br />
+                    If PSA doesn't know that a card has been cracked and the person never sent PSA the label so they can update their population history, this site doesn't know either.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><strong>Requests to Track Additional Sets / Custom Sets / Cards</strong></h5>
+                </div>
+                <div class="ibox-content">
+                    Please forward all requests to begin tracking additional sets, custom sets or cards to me at velitheturtle@gmail.com and then ping me on Instagram at <strong>veli_the_turtle</strong>
+                    <br /><br />
+                    In fact, I designed the project in such a way that it could even support other types of cards like Baseball, Topps, whatever PSA grades as long as the grades are visible on their population report.
+                    <br /><br />
+                    You'd need to give me the link to each particular card's pop report at PSA.
+                    <br /><br />
+                    <i>i.e. Blastoise-Holo / "Stage" Error from https://www.psacard.com/pop/tcg-cards/1999/pokemon-game/57801</i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><strong>About Me</strong></h5>
+                </div>
+                <div class="ibox-content">
+                    Software and mobile developer (full stack but front-end is the weak point in my portfolio)
+                    <br /><br />
+                    Instagram: <strong>veli_the_turtle</strong>
+                    <br /><br />
+                    Collects Yugioh cards (big into Ghost Rares) and Pokemon cards with nice art.
+                    <br /><br />
+                    Was bored over Christmas 2019 and decided to actually code for once outside of work hours.
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><strong>Thoughts on Expansion</strong></h5>
+                </div>
+                <div class="ibox-content">
+                    I am still working on the site's UI, links and the types of graphs/charts. If you have an idea for what type of chart I could add to the site, please contact me.
+                    <br /><br /><br />
+                    I did entertain the idea of making email notifications that goes out informing people when additional cards have been graded with a certain grade or in general but I'm still not sure of how far I want to take this project.
+                    <br /><br />
+                    While PokemonPrice.com does a splendid job in providing collectors with valuable information about pricing, it is not something that PSA can easily do and the data is incomplete.
+                    <br /><br />
+                    Besides Ebay, which in of itself is also unstable (sometimes their API returns actual price sold for Best Offers, sometimes not), it also cannot possibly retrieve data on private transactions or other common markets such as TrollAndToad, TCGPlayer, Cardmarket because they don't disclose sales.
+                    <br /><br />
+                    Population data, on the other hand, is something that is derived entirely from PSA. It is entirely possible for PSA to implement every feature in this entire site. It would take them less effort and would also look way better than what I have here.
+                    <br /><br />
+                    I do not want to invest too heavily into this project knowing that it can be shut down so easily.
+                    <br /><br />
+                    <i>PSA, if you like this idea and want to expand on it, I encourage it, but at the least let me keep this site online until you roll that feature out to production.</i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grid .ibox {
+        margin-bottom: 0;
+    }
+
+    .grid-item {
+        margin-bottom: 25px;
+        width: 300px;
+    }
+</style>
+
+@section Scripts {
+    <environment names="Development,Staging,Production">
+        <script src="~/lib/masonry/dist/masonry.pkgd.js"></script>
+    </environment>
+
+    <script type="text/javascript">
+
+        $(window).on('load', function () {
+            $('.grid').masonry({
+                // options
+                itemSelector: '.grid-item',
+                columnWidth: 300,
+                gutter: 25
+            });
+        });
+
+    </script>
+}
