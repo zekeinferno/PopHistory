@@ -2,7 +2,7 @@
 
 namespace PopHistory.Models
 {
-    public class PsaCardWithPopulation : PsaCard
+    public class PsaSetWithPopulation : PsaSet
     {
         public int CurrentTotalPopulation { get; set; }
         public int? CurrentPop10 { get; set; }

@@ -29,39 +29,47 @@ namespace PopHistory.Controllers
                 var cardIds = cards.Select(x => x.Id).ToList();
                 var popHistories = _context.PsaPopHistory.Where(x => cardIds.Contains(x.CardId)).ToList();
 
-                var cardsWithPopulation = new List<PsaCardWithPopulation>();
-                foreach (var card in cards)
-                {
-                    var popHistory = popHistories.Where(x => x.CardId == card.Id).ToList();
+                var dateCreated = _context.PsaPopHistory.OrderByDescending(x => x.DateCreated).Select(x => x.DateCreated).Distinct().ToList();
 
-                    if (popHistory.Count > 0)
-                    {
-                        var currentHistory = popHistory.OrderByDescending(x => x.DateCreated).First();
-
-                        cardsWithPopulation.Add(new PsaCardWithPopulation(card)
-                        {
-                            CurrentPop10 = currentHistory.Pop10,
-                            TotalPopulation = 
-                                (currentHistory.PopAuth ?? 0) +
-                                (currentHistory.Pop01 ?? 0) +
-                                (currentHistory.Pop02 ?? 0) +
-                                (currentHistory.Pop03 ?? 0) +
-                                (currentHistory.Pop04 ?? 0) +
-                                (currentHistory.Pop05 ?? 0) +
-                                (currentHistory.Pop06 ?? 0) +
-                                (currentHistory.Pop07 ?? 0) +
-                                (currentHistory.Pop08 ?? 0) +
-                                (currentHistory.Pop09 ?? 0) +
-                                (currentHistory.Pop10 ?? 0)
-                        });
-                    }
-                }
+                var cardsWithPopulation = from pc in _context.PsaCard
+                                          join pph in _context.PsaPopHistory on pc.Id equals pph.CardId
+                                          where pc.SetId == set.Id && pph.DateCreated == dateCreated.First()
+                                          select new
+                                          {
+                                              pc,
+                                              pph
+                                          } into temp
+                                          group temp by new
+                                          {
+                                              temp.pc.CardNumber,
+                                              temp.pc.NamePrimary,
+                                              temp.pc.NameSecondary
+                                          } into g
+                                          select new PsaCardWithPopulation
+                                          {
+                                              CardNumber = g.Key.CardNumber,
+                                              NamePrimary = g.Key.NamePrimary,
+                                              NameSecondary = g.Key.NameSecondary,
+                                              CurrentTotalPopulation = g.Sum(x =>
+                                                 (x.pph.PopAuth ?? 0) +
+                                                 (x.pph.Pop01 ?? 0) +
+                                                 (x.pph.Pop02 ?? 0) +
+                                                 (x.pph.Pop03 ?? 0) +
+                                                 (x.pph.Pop04 ?? 0) +
+                                                 (x.pph.Pop05 ?? 0) +
+                                                 (x.pph.Pop06 ?? 0) +
+                                                 (x.pph.Pop07 ?? 0) +
+                                                 (x.pph.Pop08 ?? 0) +
+                                                 (x.pph.Pop09 ?? 0) +
+                                                 (x.pph.Pop10 ?? 0)),
+                                              CurrentPop10 = g.Sum(x => x.pph.Pop10)
+                                          };
 
                 return View(new SetModel
                 {
                     Title = set.Name,
                     SeriesName = series.Name,
-                    Cards = cardsWithPopulation,
+                    Cards = cardsWithPopulation.ToList(),
                     PopHistories = popHistories
                 });
             }
