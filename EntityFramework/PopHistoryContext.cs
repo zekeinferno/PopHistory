@@ -43,6 +43,14 @@ namespace PopHistory.EntityFramework
                     .IsUnicode(false);
 
                 entity.Property(e => e.SetId).HasColumnName("set_id");
+
+                entity.Property(x => x.CurrentTotalGraded)
+                    .HasColumnName("current_total_graded")
+                    .HasDefaultValue(0);
+
+                entity.Property(x => x.CurrentPop10)
+                    .HasColumnName("current_pop_10")
+                    .HasDefaultValue(0);
             });
 
             modelBuilder.Entity<PsaCustomSet>(entity =>

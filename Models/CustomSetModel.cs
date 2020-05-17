@@ -7,7 +7,7 @@ namespace PopHistory.Models
     {
         public string Title { get; set; }
         public int SetId { get; set; }
-        public List<PsaCardWithPopulation> Cards { get; set; }
+        public List<PsaCard> Cards { get; set; }
         public List<PsaPopHistory> PopHistories { get; set; }
     }
 }
