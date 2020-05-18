@@ -5,7 +5,7 @@ namespace PopHistory.Controllers
     [Route("MissionStatement")]
     public class MissionStatementController : Controller
     {
-        [OutputCache(Duration = 43200)]
+        [OutputCache(Duration = 14400)]
         public IActionResult Index()
         {
             return View();

@@ -16,7 +16,7 @@ namespace PopHistory.Controllers
             _context = context;
         }
 
-        [OutputCache(Duration = 43200)]
+        [OutputCache(Duration = 14400)]
         [Route("{setId}")]
         public IActionResult Set(int setId)
         {
@@ -41,7 +41,7 @@ namespace PopHistory.Controllers
             return NotFound();
         }
 
-        [OutputCache(Duration = 43200)]
+        [OutputCache(Duration = 14400)]
         [Route("Card/{cardId}")]
         public IActionResult Card(int cardId)
         {

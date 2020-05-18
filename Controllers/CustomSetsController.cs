@@ -16,7 +16,7 @@ namespace PopHistory.Controllers
             _context = context;
         }
 
-        [OutputCache(Duration = 43200)]
+        [OutputCache(Duration = 14400)]
         public IActionResult CustomSets()
         {
             var series = _context.Series.ToList();
