@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PopHistory.EntityFramework;
 using PopHistory.Models;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace PopHistory.Controllers
@@ -44,10 +46,13 @@ namespace PopHistory.Controllers
                                          CurrentPop10 = g.Sum(x => x.pc.CurrentPop10)
                                      };
 
+            var mostGradedCards = _context.MostGradedCard.FromSql($"GetMostGradedCardsBySeries @SeriesId={series.Id}, @Take={100}").ToList();
+
             return View("Index", new SeriesModel
             {
                 Title = series.Name,
-                Sets = setsWithPopulation.ToList()
+                Sets = setsWithPopulation.ToList(),
+                MostGradedCards = mostGradedCards
             });
         }
     }

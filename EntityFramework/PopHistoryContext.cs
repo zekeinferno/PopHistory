@@ -21,6 +21,7 @@ namespace PopHistory.EntityFramework
         public virtual DbSet<PsaPopHistory> PsaPopHistory { get; set; }
         public virtual DbSet<PsaSet> PsaSet { get; set; }
         public virtual DbSet<Series> Series { get; set; }
+        public virtual DbQuery<MostGradedCard> MostGradedCard { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -152,6 +153,15 @@ namespace PopHistory.EntityFramework
                     .IsRequired()
                     .HasColumnName("name")
                     .IsUnicode(false);
+            });
+
+
+            modelBuilder.Query<MostGradedCard>(query =>
+            {
+                query.Property(e => e.NamePrimary).HasColumnName("name_primary");
+
+
+                query.Property(e => e.CurrentTotalGraded).HasColumnName("current_total_graded");
             });
         }
     }

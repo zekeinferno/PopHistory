@@ -7,5 +7,6 @@ namespace PopHistory.Models
     {
         public string Title { get; set; }
         public List<ExtendedPsaSet> Sets { get; set; }
+        public List<MostGradedCard> MostGradedCards { get; set; }
     }
 }
