@@ -35,12 +35,12 @@ namespace PopHistory.Controllers
                                          temp.ps.Name,
                                          temp.ps.Year
                                      } into g
-                                     select new PsaSetWithPopulation
+                                     select new ExtendedPsaSet
                                      {
                                          Id = g.Key.Id,
                                          Name = g.Key.Name,
                                          Year = g.Key.Year,
-                                         CurrentTotalPopulation = g.Sum(x => x.pc.CurrentTotalGraded),
+                                         CurrentTotalGraded = g.Sum(x => x.pc.CurrentTotalGraded),
                                          CurrentPop10 = g.Sum(x => x.pc.CurrentPop10)
                                      };
 

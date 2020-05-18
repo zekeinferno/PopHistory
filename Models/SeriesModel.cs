@@ -6,6 +6,6 @@ namespace PopHistory.Models
     public class SeriesModel
     {
         public string Title { get; set; }
-        public List<PsaSetWithPopulation> Sets { get; set; }
+        public List<ExtendedPsaSet> Sets { get; set; }
     }
 }

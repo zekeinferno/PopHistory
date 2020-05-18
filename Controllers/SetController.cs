@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PopHistory.EntityFramework;
 using PopHistory.Models;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace PopHistory.Controllers
@@ -25,7 +24,7 @@ namespace PopHistory.Controllers
             {
                 var set = sets.First();
                 var series = _context.Series.First(x => x.Id == set.SeriesId);
-                var cards = _context.PsaCard.Where(x => x.SetId == setId).ToList();
+                var cards = _context.PsaCard.Where(x => x.SetId == setId).Select(x => new ExtendedPsaCard(x)).ToList();
                 var cardIds = cards.Select(x => x.Id).ToList();
                 var popHistories = _context.PsaPopHistory.Where(x => cardIds.Contains(x.CardId)).ToList();
 
